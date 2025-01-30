@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Definir las rutas de Python y pip
-        PYTHON_HOME = 'C:\\Users\\Jjaavviieerroperro\\AppData\\Local\\Programs\\Python\\Python312'
-        PATH = "${PYTHON_HOME};${PYTHON_HOME}\\Scripts;${env.PATH}"
-    }
-
     stages {
         stage('Checkout SCM') {
             steps {
@@ -19,11 +13,13 @@ pipeline {
             steps {
                 echo 'Verificando instalación de Python y pip'
                 script {
-                    // Usar 'bat' en vez de 'sh' si estás en Windows
-                    bat 'echo %PATH%'  // Muestra el PATH en Windows
-                    bat 'python --version'  // Mostrar la versión de Python
-                    bat 'pip --version'  // Mostrar la versión de pip
-                    bat 'pip install -r requirements.txt'  // Instalar dependencias
+                    // Muestra el PATH, versión de Python y pip para verificar que están instalados
+                    sh 'echo $PATH'  
+                    sh 'python3 --version'
+                    sh 'pip3 --version'
+                    
+                    // Cambia a la carpeta donde está el requirements.txt y luego instala las dependencias
+                    sh 'cd Jenkins && pip3 install -r requirements.txt'
                 }
             }
         }
@@ -56,6 +52,7 @@ pipeline {
         }
     }
 }
+
 
 
 
