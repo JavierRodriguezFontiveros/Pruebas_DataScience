@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        VIRTUAL_ENV = 'venv'
-        REQUIREMENTS_FILE = 'requirements.txt'
+        // Definir las rutas de Python y pip
+        PYTHON_HOME = 'C:\\Users\\Jjaavviieerroperro\\AppData\\Local\\Programs\\Python\\Python312'
+        PATH = "${PYTHON_HOME};${PYTHON_HOME}\\Scripts;${env.PATH}"
     }
 
     stages {
@@ -16,56 +17,45 @@ pipeline {
 
         stage('Instalar Dependencias') {
             steps {
+                echo 'Verificando instalación de Python y pip'
                 script {
-                    // Mostrar la versión de Python y pip
-                    echo 'Verificando instalación de Python y pip'
-                    sh 'python --version'
-                    sh 'pip --version'
-
-                    // Crear un entorno virtual y verificar su creación
-                    echo 'Creando entorno virtual...'
-                    sh '''
-                    python -m venv $VIRTUAL_ENV
-                    echo "Virtual environment created at: $VIRTUAL_ENV"
-                    source $VIRTUAL_ENV/bin/activate
-                    python --version
-                    pip --version
-                    '''
-                    
-                    // Intentar instalar las dependencias y capturar salida
-                    echo 'Instalando dependencias...'
-                    sh '''
-                    source $VIRTUAL_ENV/bin/activate
-                    pip install --upgrade pip
-                    echo "Installing dependencies from $REQUIREMENTS_FILE..."
-                    pip install -r $REQUIREMENTS_FILE
-                    '''
+                    // Depuración: Mostrar las rutas de Python y pip
+                    sh 'echo $PATH'  // Esto debería mostrar el PATH completo
+                    sh 'python --version'  // Mostrar la versión de Python
+                    sh 'pip --version'  // Mostrar la versión de pip
                 }
             }
         }
 
         stage('Entrenar Modelo') {
             steps {
-                echo 'Entrenando el modelo...'
-                // Aquí agregamos más detalles si tienes código para entrenar el modelo
+                echo 'Entrenando modelo...'
+                // Tu código para entrenar el modelo aquí
             }
         }
 
         stage('Ejecutar Pruebas') {
             steps {
                 echo 'Ejecutando pruebas...'
-                // Aquí agregamos más detalles si tienes código para ejecutar pruebas
+                // Tu código para ejecutar pruebas aquí
+            }
+        }
+
+        stage('Post Actions') {
+            steps {
+                echo 'Cleaning up workspace...'
+                cleanWs()
             }
         }
     }
 
     post {
-        always {
-            echo 'Cleaning up workspace...'
-            cleanWs()  // Limpiar el espacio de trabajo de Jenkins
+        failure {
+            echo 'El pipeline falló. Revisa los logs detallados.'
         }
     }
 }
+
 
 
 
