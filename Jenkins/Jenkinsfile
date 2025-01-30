@@ -1,65 +1,91 @@
 pipeline {
     agent any
 
-    environment {
-        // Aseguramos que python y pip estén disponibles
-        PYTHON = 'python'
-        PIP = 'pip'
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                echo 'Clonando el repositorio...'
+                echo "Paso 1: Clonando el repositorio..."
                 checkout scm
+                echo "Repositorios clonados exitosamente."
+            }
+        }
+        
+        stage('Verificar Python y Pip') {
+            steps {
+                echo "Paso 2: Verificando la instalación de Python y Pip..."
+                script {
+                    try {
+                        sh 'python --version'
+                        sh 'pip --version'
+                        echo "Python y pip están instalados correctamente."
+                    } catch (Exception e) {
+                        echo "Error al verificar Python o Pip. Revisa la configuración del entorno."
+                        throw e  // Esto detendrá el pipeline si falla la verificación
+                    }
+                }
             }
         }
 
         stage('Instalar Dependencias') {
             steps {
-                echo 'Verificando instalación de Python y pip'
+                echo "Paso 3: Instalando dependencias desde requirements.txt..."
                 script {
-                    // Verificar Python y pip
-                    sh '''
-                        $PYTHON --version
-                        $PIP --version
-                        $PIP install -r Jenkins/requirements.txt
-                    '''
+                    try {
+                        sh 'pip install -r Jenkins/requirements.txt'
+                        echo "Dependencias instaladas correctamente."
+                    } catch (Exception e) {
+                        echo "Error al instalar dependencias. Verifica el archivo requirements.txt."
+                        throw e  // Detiene el pipeline si falla la instalación
+                    }
                 }
             }
         }
 
         stage('Entrenar Modelo') {
             steps {
-                echo 'Entrenando el modelo...'
+                echo "Paso 4: Entrenando el modelo..."
                 script {
-                    // Aseguramos que train.py está en la carpeta Jenkins
-                    sh """
-                        $PYTHON Jenkins/train.py
-                    """
+                    try {
+                        sh 'python Jenkins/train.py'
+                        echo "Modelo entrenado exitosamente."
+                    } catch (Exception e) {
+                        echo "Error al entrenar el modelo. Revisa el script train.py."
+                        throw e  // Detiene el pipeline si hay un error
+                    }
                 }
             }
         }
 
         stage('Ejecutar Pruebas') {
             steps {
-                echo 'Ejecutando pruebas...'
+                echo "Paso 5: Ejecutando las pruebas..."
                 script {
-                    // Aseguramos que test.py está en la carpeta Jenkins
-                    sh """
-                        $PYTHON Jenkins/test.py
-                    """
+                    try {
+                        sh 'python Jenkins/test.py'
+                        echo "Pruebas ejecutadas correctamente."
+                    } catch (Exception e) {
+                        echo "Error al ejecutar las pruebas. Revisa el script test.py."
+                        throw e  // Detiene el pipeline si hay un error
+                    }
                 }
             }
         }
+
     }
 
     post {
         always {
-            echo 'El pipeline ha terminado.'
+            echo "El pipeline ha terminado."
+        }
+        success {
+            echo "El pipeline se ejecutó correctamente sin errores."
+        }
+        failure {
+            echo "El pipeline ha fallado. Revisa los logs para más detalles."
         }
     }
 }
+
 
 
 
