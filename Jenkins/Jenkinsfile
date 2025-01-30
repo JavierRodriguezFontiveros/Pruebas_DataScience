@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    stages {
+        stage('Clonar Código') {
+            steps {
+                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/TU_USUARIO/ml_pipeline.git'
+            }
+        }
+        stage('Instalar Dependencias') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        stage('Entrenar Modelo') {
+            steps {
+                sh 'python train.py'
+            }
+        }
+        stage('Ejecutar Pruebas') {
+            steps {
+                sh 'pytest test.py'
+            }
+        }
+    }
+}
