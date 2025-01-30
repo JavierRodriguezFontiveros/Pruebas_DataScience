@@ -1,29 +1,68 @@
 pipeline {
     agent any
 
+    environment {
+        VIRTUAL_ENV = 'venv'
+        REQUIREMENTS_FILE = 'requirements.txt'
+    }
+
     stages {
-        stage('Clonar Código') {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main', url: 'https://github.com/JavierRodriguezFontiveros/Pruebas_DataScience.git'
+                echo 'Checking out source code...'
+                checkout scm
             }
         }
 
         stage('Instalar Dependencias') {
             steps {
-                sh 'pip install -r Jenkins/requirements.txt'
+                script {
+                    // Mostrar la versión de Python y pip
+                    echo 'Verificando instalación de Python y pip'
+                    sh 'python --version'
+                    sh 'pip --version'
+
+                    // Crear un entorno virtual y verificar su creación
+                    echo 'Creando entorno virtual...'
+                    sh '''
+                    python -m venv $VIRTUAL_ENV
+                    echo "Virtual environment created at: $VIRTUAL_ENV"
+                    source $VIRTUAL_ENV/bin/activate
+                    python --version
+                    pip --version
+                    '''
+                    
+                    // Intentar instalar las dependencias y capturar salida
+                    echo 'Instalando dependencias...'
+                    sh '''
+                    source $VIRTUAL_ENV/bin/activate
+                    pip install --upgrade pip
+                    echo "Installing dependencies from $REQUIREMENTS_FILE..."
+                    pip install -r $REQUIREMENTS_FILE
+                    '''
+                }
             }
         }
 
         stage('Entrenar Modelo') {
             steps {
                 echo 'Entrenando el modelo...'
+                // Aquí agregamos más detalles si tienes código para entrenar el modelo
             }
         }
 
         stage('Ejecutar Pruebas') {
             steps {
                 echo 'Ejecutando pruebas...'
+                // Aquí agregamos más detalles si tienes código para ejecutar pruebas
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()  // Limpiar el espacio de trabajo de Jenkins
         }
     }
 }
