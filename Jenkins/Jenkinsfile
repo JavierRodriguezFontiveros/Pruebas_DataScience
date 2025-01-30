@@ -1,26 +1,33 @@
 pipeline {
     agent any
 
+    environment {
+        // Define the path to include python and pip directories if needed
+        PATH = "/usr/local/bin:/usr/bin:/bin:/path/to/python:/path/to/python/scripts:$PATH"
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                echo "Paso 1: Clonando el repositorio..."
+                echo 'Paso 1: Clonando el repositorio...'
                 checkout scm
-                echo "Repositorios clonados exitosamente."
+                echo 'Repositorios clonados exitosamente.'
             }
         }
-        
+
         stage('Verificar Python y Pip') {
             steps {
-                echo "Paso 2: Verificando la instalación de Python y Pip..."
+                echo 'Paso 2: Verificando la instalación de Python y Pip...'
                 script {
                     try {
+                        // Verifica si python está disponible
                         sh 'python --version'
+                        // Verifica si pip está disponible
                         sh 'pip --version'
-                        echo "Python y pip están instalados correctamente."
+                        echo 'Python y pip instalados correctamente.'
                     } catch (Exception e) {
-                        echo "Error al verificar Python o Pip. Revisa la configuración del entorno."
-                        throw e  // Esto detendrá el pipeline si falla la verificación
+                        echo 'Error al verificar Python o Pip. Revisa la configuración del entorno.'
+                        error "No se pudo verificar Python o Pip"
                     }
                 }
             }
@@ -28,14 +35,14 @@ pipeline {
 
         stage('Instalar Dependencias') {
             steps {
-                echo "Paso 3: Instalando dependencias desde requirements.txt..."
+                echo 'Paso 3: Instalando dependencias...'
                 script {
                     try {
                         sh 'pip install -r Jenkins/requirements.txt'
-                        echo "Dependencias instaladas correctamente."
+                        echo 'Dependencias instaladas correctamente.'
                     } catch (Exception e) {
-                        echo "Error al instalar dependencias. Verifica el archivo requirements.txt."
-                        throw e  // Detiene el pipeline si falla la instalación
+                        echo 'Error al instalar las dependencias.'
+                        error "Fallo en la instalación de dependencias"
                     }
                 }
             }
@@ -43,14 +50,14 @@ pipeline {
 
         stage('Entrenar Modelo') {
             steps {
-                echo "Paso 4: Entrenando el modelo..."
+                echo 'Paso 4: Entrenando el modelo...'
                 script {
                     try {
                         sh 'python Jenkins/train.py'
-                        echo "Modelo entrenado exitosamente."
+                        echo 'Entrenamiento completado.'
                     } catch (Exception e) {
-                        echo "Error al entrenar el modelo. Revisa el script train.py."
-                        throw e  // Detiene el pipeline si hay un error
+                        echo 'Error en el entrenamiento del modelo.'
+                        error "Fallo en el entrenamiento del modelo"
                     }
                 }
             }
@@ -58,36 +65,29 @@ pipeline {
 
         stage('Ejecutar Pruebas') {
             steps {
-                echo "Paso 5: Ejecutando las pruebas..."
+                echo 'Paso 5: Ejecutando pruebas...'
                 script {
                     try {
                         sh 'python Jenkins/test.py'
-                        echo "Pruebas ejecutadas correctamente."
+                        echo 'Pruebas ejecutadas correctamente.'
                     } catch (Exception e) {
-                        echo "Error al ejecutar las pruebas. Revisa el script test.py."
-                        throw e  // Detiene el pipeline si hay un error
+                        echo 'Error al ejecutar las pruebas.'
+                        error "Fallo en la ejecución de pruebas"
                     }
                 }
             }
         }
-
     }
 
     post {
         always {
-            echo "El pipeline ha terminado."
+            echo 'El pipeline ha terminado.'
         }
         success {
-            echo "El pipeline se ejecutó correctamente sin errores."
+            echo 'El pipeline se ejecutó con éxito.'
         }
         failure {
-            echo "El pipeline ha fallado. Revisa los logs para más detalles."
+            echo 'El pipeline ha fallado. Revisa los logs para más detalles.'
         }
     }
 }
-
-
-
-
-
-
