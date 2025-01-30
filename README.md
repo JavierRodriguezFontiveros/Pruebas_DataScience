@@ -3,3 +3,4 @@
 ![Dashboard de ejemplo](Imagenes/dashboard_streamlit.png)
 
 ## Pipeline con Jenkins
+![jenkins](Imagenes/jenkins.png)
