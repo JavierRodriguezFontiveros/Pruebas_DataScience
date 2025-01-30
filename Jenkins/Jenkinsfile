@@ -2,15 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Declarative: Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Clonar Código') {
             steps {
-                git 'https://github.com/JavierRodriguezFontiveros/Pruebas_DataScience.git'
+                git branch: 'main', url: 'https://github.com/JavierRodriguezFontiveros/Pruebas_DataScience.git'
             }
         }
 
