@@ -1,10 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        // Aseguramos que python y pip estén disponibles
+        PYTHON = 'python'
+        PIP = 'pip'
+    }
+
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
+                echo 'Clonando el repositorio...'
                 checkout scm
             }
         }
@@ -13,46 +19,47 @@ pipeline {
             steps {
                 echo 'Verificando instalación de Python y pip'
                 script {
-                    // Muestra el PATH, versión de Python y pip para verificar que están instalados
-                    sh 'echo $PATH'  
-                    sh 'python3 --version'
-                    sh 'pip3 --version'
-                    
-                    // Cambia a la carpeta donde está el requirements.txt y luego instala las dependencias
-                    sh 'cd Jenkins && pip3 install -r requirements.txt'
+                    // Verificar Python y pip
+                    sh '''
+                        $PYTHON --version
+                        $PIP --version
+                        $PIP install -r Jenkins/requirements.txt
+                    '''
                 }
             }
         }
 
         stage('Entrenar Modelo') {
             steps {
-                echo 'Entrenando modelo...'
-                // Tu código para entrenar el modelo aquí
+                echo 'Entrenando el modelo...'
+                script {
+                    // Aseguramos que train.py está en la carpeta Jenkins
+                    sh """
+                        $PYTHON Jenkins/train.py
+                    """
+                }
             }
         }
 
         stage('Ejecutar Pruebas') {
             steps {
                 echo 'Ejecutando pruebas...'
-                // Tu código para ejecutar pruebas aquí
-            }
-        }
-
-        stage('Post Actions') {
-            steps {
-                echo 'Cleaning up workspace...'
-                cleanWs()
+                script {
+                    // Aseguramos que test.py está en la carpeta Jenkins
+                    sh """
+                        $PYTHON Jenkins/test.py
+                    """
+                }
             }
         }
     }
 
     post {
-        failure {
-            echo 'El pipeline falló. Revisa los logs detallados.'
+        always {
+            echo 'El pipeline ha terminado.'
         }
     }
 }
-
 
 
 
