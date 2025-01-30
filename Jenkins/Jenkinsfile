@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clonar Código') {
             steps {
-                checkout scm
+                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/JavierRodriguezFontiveros/Pruebas_DataScience.git'
             }
         }
 
@@ -27,4 +27,5 @@ pipeline {
         }
     }
 }
+
 
