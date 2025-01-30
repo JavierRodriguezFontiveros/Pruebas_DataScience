@@ -19,10 +19,11 @@ pipeline {
             steps {
                 echo 'Verificando instalación de Python y pip'
                 script {
-                    // Depuración: Mostrar las rutas de Python y pip
-                    sh 'echo $PATH'  // Esto debería mostrar el PATH completo
-                    sh 'python --version'  // Mostrar la versión de Python
-                    sh 'pip --version'  // Mostrar la versión de pip
+                    // Usar 'bat' en vez de 'sh' si estás en Windows
+                    bat 'echo %PATH%'  // Muestra el PATH en Windows
+                    bat 'python --version'  // Mostrar la versión de Python
+                    bat 'pip --version'  // Mostrar la versión de pip
+                    bat 'pip install -r requirements.txt'  // Instalar dependencias
                 }
             }
         }
@@ -55,6 +56,7 @@ pipeline {
         }
     }
 }
+
 
 
 
