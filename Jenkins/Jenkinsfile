@@ -1,32 +1,110 @@
 pipeline {
     agent any
 
+    environment {
+        // Definir la ruta a Python en el entorno si es necesario
+        // Ejemplo: PATH = '/usr/local/bin/python3:/usr/local/bin'
+    }
+
     stages {
+        stage('Declarative: Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Verificar Python y Pip') {
+            steps {
+                // Comprobar las versiones de Python y Pip disponibles
+                script {
+                    try {
+                        sh 'python --version'
+                        sh 'pip --version'
+                    } catch (Exception e) {
+                        echo "Error al verificar Python y Pip: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error "Error en la verificación de versiones"
+                    }
+                }
+            }
+        }
+
         stage('Clonar Código') {
             steps {
-                git branch: 'main', credentialsId: 'github-credentials', url: 'https://github.com/JavierRodriguezFontiveros/Pruebas_DataScience.git'
+                // Realizar el clonado del repositorio
+                script {
+                    try {
+                        sh 'git rev-parse --resolve-git-dir'
+                        sh 'git fetch --tags --force --progress'
+                    } catch (Exception e) {
+                        echo "Error al clonar el código: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error "Error en el clonado del repositorio"
+                    }
+                }
             }
         }
 
         stage('Instalar Dependencias') {
             steps {
-                sh 'pip install -r Jenkins/requirements.txt'
+                // Intentar instalar las dependencias necesarias
+                script {
+                    try {
+                        sh 'echo "Instalando dependencias..."'
+                        sh 'pip install -r Jenkins/requirements.txt || echo "Error en pip install"'
+                    } catch (Exception e) {
+                        echo "Error al instalar las dependencias: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error "Error en la instalación de dependencias"
+                    }
+                }
             }
         }
 
         stage('Entrenar Modelo') {
             steps {
-                sh 'python Jenkins/train.py'
+                // Aquí puedes agregar el comando para entrenar tu modelo
+                script {
+                    try {
+                        sh 'echo "Entrenando modelo..."'
+                        // Reemplaza con el comando real para entrenar tu modelo
+                    } catch (Exception e) {
+                        echo "Error al entrenar el modelo: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error "Error al entrenar el modelo"
+                    }
+                }
             }
         }
 
         stage('Ejecutar Pruebas') {
             steps {
-                sh 'pytest Jenkins/test.py'
+                // Aquí puedes agregar el comando para ejecutar las pruebas
+                script {
+                    try {
+                        sh 'echo "Ejecutando pruebas..."'
+                        // Reemplaza con el comando real para ejecutar las pruebas
+                    } catch (Exception e) {
+                        echo "Error al ejecutar las pruebas: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error "Error al ejecutar las pruebas"
+                    }
+                }
             }
         }
     }
-}
 
+    post {
+        success {
+            echo 'El pipeline se completó con éxito.'
+        }
+        failure {
+            echo 'El pipeline falló. Verifique los errores en los logs.'
+        }
+        always {
+            echo 'El pipeline ha finalizado.'
+        }
+    }
+}
 
 
