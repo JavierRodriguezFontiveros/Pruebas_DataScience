@@ -1,0 +1,17 @@
+Orquestación con Kubernetes:
+Cuando pasas a Kubernetes, lo que haces es orquestar estos contenedores (que antes estaban aislados) en un clúster para que trabajen juntos de manera eficiente.
+
+Con Kubernetes puedes:
+
+Escalar fácilmente: Kubernetes te permite crear múltiples réplicas de tus contenedores para manejar mayores cargas de tráfico.
+Gestionar el ciclo de vida de tus aplicaciones: Al ser un sistema de orquestación, Kubernetes maneja la creación, actualización, monitoreo y eliminación de contenedores de manera automatizada.
+Facilitar despliegues en la nube: Kubernetes te permite ejecutar tus aplicaciones en entornos de nube de manera eficiente. Puedes mover tu aplicación entre diferentes proveedores de la nube (AWS, GCP, Azure, etc.) sin problemas.
+Usar Kubernetes para modificar, guardar y ejecutar la aplicación:
+Con Kubernetes puedes ejecutar tus contenedores en un clúster en la nube o en tu propio servidor. Esto te permite:
+
+Desplegar aplicaciones de manera repetible: Kubernetes hace que el proceso de despliegue sea más predecible y consistente, sin importar el entorno donde se ejecute.
+Actualizar o modificar servicios sin interrumpir todo: Puedes hacer actualizaciones de manera gradual con Rolling Updates sin tiempo de inactividad. Kubernetes maneja esto de forma automática.
+Guardar la configuración del clúster: Kubernetes usa archivos de configuración (como los archivos YAML) para describir el estado deseado de tu aplicación y clúster, lo que te permite versionar y gestionar la configuración de manera sencilla.
+Monitoreo, escalabilidad y gestión: En lugar de ejecutar y gestionar contenedores manualmente, Kubernetes te da herramientas de monitoreo, escalado automático y distribución de carga para gestionar aplicaciones complejas.
+
+Este enfoque hace que tu aplicación sea más modular, más fácil de actualizar, y mucho más sencilla de gestionar en la nube, permitiendo un ciclo de vida más fluido y controlado.

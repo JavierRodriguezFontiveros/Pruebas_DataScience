@@ -1,0 +1,46 @@
+Objetivo:
+Simular la creación y gestión de un clúster de Kubernetes para desplegar una aplicación de múltiples servicios (por ejemplo, una aplicación web con backend y base de datos).
+
+1. Diseño del Clúster Kubernetes
+Primero, el diseño del clúster Kubernetes que usarías. Esto incluiría:
+
+Número de nodos: Un clúster básico puede tener un solo nodo maestro (para controlar el clúster) y varios nodos de trabajo (para ejecutar los contenedores).
+Nodos de trabajo: Podrías tener nodos que corran servicios como un frontend en React, un backend en Node.js o Python y una base de datos como MySQL o MongoDB.
+Escalabilidad: Como parte del proyecto, podrías plantear la capacidad de escalar estos servicios, dependiendo de la carga de tráfico que reciban.
+2. Definir los Servicios
+Para el mini proyecto, podrías dividir la aplicación en servicios o pods. Por ejemplo:
+
+Frontend: Una aplicación web que corra en un contenedor, expuesta al tráfico externo.
+Backend: Un servicio que exponga una API para interactuar con el frontend. Este backend podría comunicarse con una base de datos.
+Base de datos: Un servicio que aloja la base de datos de la aplicación, como MySQL o MongoDB, en un contenedor separado.
+3. Desplegar Aplicaciones con Deployments
+En Kubernetes, usarías Deployments para administrar los pods que ejecutan los servicios de la aplicación.
+
+Frontend Deployment: Un Deployment para gestionar el frontend, con configuraciones de réplicas para asegurar alta disponibilidad.
+Backend Deployment: Otro Deployment para el backend, también con réplicas, y un volumen persistente si necesitas almacenar datos de manera duradera.
+Base de datos: Podrías tener un StatefulSet para la base de datos si la aplicación necesita persistencia, de modo que los datos no se pierdan si el contenedor de la base de datos se reinicia.
+4. Configuración de Servicios Expuestos
+Configurarías Services para exponer los contenedores y permitir que se comuniquen entre ellos. Por ejemplo:
+
+Servicio de frontend: Un LoadBalancer o NodePort que permita el acceso externo a la aplicación web.
+Servicio de backend: Un ClusterIP para que el backend sea accesible solo dentro del clúster.
+Base de datos: Un ClusterIP que permita que el backend acceda a la base de datos sin exponerla externamente.
+5. Volúmenes y Persistencia de Datos
+Persistencia: Asegurarte de que la base de datos tenga volúmenes persistentes configurados para que los datos no se pierdan al reiniciar el contenedor.
+ConfigMap/Secret: Utilizar ConfigMaps para almacenar configuraciones que pueden cambiar (como configuraciones de red, URLs, etc.) y Secrets para manejar información sensible como credenciales de base de datos.
+6. Escalado y Autoscaling
+Teóricamente, puedes configurar Horizontal Pod Autoscaling (HPA) para que, dependiendo del tráfico (como el uso de CPU o memoria), los servicios se escalen automáticamente para manejar cargas altas.
+
+7. Monitoreo y Logs
+Configurarías el monitoreo de la aplicación usando herramientas como Prometheus y Grafana, y gestionaría los logs usando ELK stack (Elasticsearch, Logstash, Kibana) o Fluentd.
+
+8. Actualizaciones y Rollback
+En Kubernetes, podrías usar Rolling Updates para hacer actualizaciones graduales de los contenedores sin tiempo de inactividad. Además, Kubernetes te permite hacer Rollbacks si algo sale mal durante una actualización.
+
+Resumen del Proyecto Teórico
+Crear un clúster de Kubernetes.
+Desplegar una aplicación distribuida de varios servicios, como frontend, backend y base de datos, en contenedores.
+Configurar volúmenes persistentes y configuraciones.
+Exponer los servicios adecuadamente a través de Services.
+Implementar escalado automático y monitoreo de la infraestructura.
+Asegurar que el clúster sea resiliente, manejando actualizaciones y rollbacks.
